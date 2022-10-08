@@ -14,7 +14,6 @@ const sendToken = (user, statusCode, res,option) => {
   if(option === 'login') templete = 'login'
   else if(option === 'register') templete = 'register'
 
-
   sendEmail(user.email, templete, "", user.name, token);
   res.status(statusCode).cookie("token", token, options).json({
     success: true,

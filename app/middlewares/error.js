@@ -33,6 +33,7 @@ module.exports = (err, req, res, next) => {
   }
 
   res.status(err.statusCode).json({
+    status: getReasonPhrase(err.statusCode),
     success: false,
     message: err.message,
   });

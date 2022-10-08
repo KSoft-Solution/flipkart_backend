@@ -60,7 +60,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       )
     );
   }
-  const isPasswordMatched = await bcrypt.comparePassword(password, user.password);
+  const isPasswordMatched = await user.comparePassword(password, user.password);
   if (!isPasswordMatched) {
     return next(new Error("Password is incorrect", StatusCodes?.UNAUTHORIZED));
   }

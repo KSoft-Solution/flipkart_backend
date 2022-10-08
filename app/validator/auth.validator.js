@@ -26,7 +26,7 @@ exports.isRequestValidated = (req, res, next) => {
     return res.status(StatusCodes?.BAD_REQUEST).json({
       status: ReasonPhrases?.BAD_REQUEST,
       success: false,
-      error: errors.array()[0].msg,
+      message: errors.array()[0].msg,
     });
   }
   next();
