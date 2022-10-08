@@ -1,3 +1,5 @@
+require("./config/mongodb.config");
+require('./config/cloudnary.config')
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -8,6 +10,9 @@ const fileUpload = require("express-fileupload");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("flash");
+
+const errorMiddleware = require('./middlewares/error')
+const routers = require('./routes/routes')
 
 const app = express();
 const mongoUrl = process.env.MONGO_URI;
@@ -68,6 +73,9 @@ app.use((req, res, next) => {
   next();
 });
 app.use(cors());
+
+app.use(routers);
+app.use(errorMiddleware);
 
 
 module.exports = app;

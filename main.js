@@ -1,7 +1,5 @@
 require("dotenv").config();
 require("colors");
-require("./app/config/mongodb.config");
-
 const http = require("http");
 const { createServer } = require("http");
 const Server = require("socket.io");
