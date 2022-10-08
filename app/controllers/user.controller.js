@@ -11,7 +11,7 @@ const crypto = require("crypto");
 const sendEmail = require("../utils/mail.util");
 const sendToken = require("../utils/token");
 const ErrorHander = require("../helper/errorHandler");
-const cloudinary  = require("../config/cloudnary.config");
+const cloudinary = require("../config/cloudnary.config");
 
 const upload = async (file) => {
   const image = await cloudinary.uploader.upload(
@@ -23,8 +23,8 @@ const upload = async (file) => {
 };
 
 const registerUser = asyncHandler(async (req, res, next) => {
-  const { avatar } = req.files;
-  const cloudFile = await upload(avatar.tempFilePath);
+  // const { avatar } = req.files;
+  // const cloudFile = await upload(avatar.tempFilePath);
 
   // const file = req.files.avatar;
   // const myCloud = await upload(file.tempFilePath, {
@@ -41,10 +41,10 @@ const registerUser = asyncHandler(async (req, res, next) => {
     email,
     password,
     gender,
-    avatar: {
-      public_id: cloudFile.public_id,
-      url: cloudFile.secure_url,
-    },
+    // avatar: {
+    //   public_id: cloudFile.public_id,
+    //   url: cloudFile.secure_url,
+    // },
   });
   await sendToken(user, StatusCodes?.CREATED, res, "register");
 });
