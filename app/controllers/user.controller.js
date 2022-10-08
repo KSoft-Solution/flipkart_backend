@@ -10,7 +10,7 @@ const {
 const crypto = require("crypto");
 const sendEmail = require("../utils/mail.util");
 const sendToken = require("../utils/token");
-const ErrorHander = require("../helper/errorHandler");
+const Error = require("../helper/errorHandler");
 const cloudinary = require("../config/cloudnary.config");
 
 const upload = async (file) => {
@@ -60,12 +60,12 @@ const loginUser = asyncHandler(async (req, res, next) => {
       )
     );
   }
-  const isPasswordMatched = await bcrypt.compare(password, user.password);
+  const isPasswordMatched = await bcrypt.comparePassword(password, user.password);
   if (!isPasswordMatched) {
     return next(new Error("Password is incorrect", StatusCodes?.UNAUTHORIZED));
   }
 
-  await sendToken(user, 200, res, "login");
+  await sendToken(user, 201, res, "login");
 });
 
 const forgotPassword = asyncHandler(async (req, res, next) => {});
