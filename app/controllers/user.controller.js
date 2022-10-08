@@ -8,20 +8,32 @@ const {
   getStatusCode,
 } = require("http-status-codes");
 const crypto = require("crypto");
-const cloudinary = require("cloudinary");
 const sendEmail = require("../utils/mail.util");
 const sendToken = require("../utils/token");
 const ErrorHander = require("../helper/errorHandler");
+const cloudinary  = require("../config/cloudnary.config");
+
+const upload = async (file) => {
+  const image = await cloudinary.uploader.upload(
+    file,
+    { folder: "avatars" },
+    (result) => result
+  );
+  return image;
+};
 
 const registerUser = asyncHandler(async (req, res, next) => {
-  const file = req.files.avatar;
-  const myCloud = await cloudinary.v2.uploader.upload(file.tempFilePath, {
-    folder: "avatars",
-    public_id: `${Date.now()}`,
-    width: 150,
-    crop: "scale",
-    resource_type: "auto",
-  });
+  const { avatar } = req.files;
+  const cloudFile = await upload(avatar.tempFilePath);
+
+  // const file = req.files.avatar;
+  // const myCloud = await upload(file.tempFilePath, {
+  //   folder: "avatars",
+  //   public_id: `${Date.now()}`,
+  //   width: 150,
+  //   crop: "scale",
+  //   resource_type: "auto",
+  // });
 
   const { name, email, gender, password } = req.body;
   const user = await User.create({
@@ -30,8 +42,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     password,
     gender,
     avatar: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
+      public_id: cloudFile.public_id,
+      url: cloudFile.secure_url,
     },
   });
   await sendToken(user, StatusCodes?.CREATED, res, "register");
