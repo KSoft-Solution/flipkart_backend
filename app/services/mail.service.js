@@ -1,13 +1,11 @@
-const resetEmail = (host, resetToken) => {
+const resetPassword = (host, token) => {
+  console.log(host, token);
   const message = {
     subject: "Reset Password",
     text:
-      `${
-        "You are receiving this because you have requested to reset your password for your account.\n\n" +
-        "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-        "http://"
-      }${host}/reset-password/${resetToken}\n\n` +
-      `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+      `"You are receiving this because you have requested to reset your password for your account.\n\n" +
+      "Please click on the following link, or paste this into your browser to complete the process:\n\n"`,
+    html: `<a href=${host}/reset-password/${token}><button>Click Here</button></a> If you did not request this, please ignore this email and your password will remain unchanged.`,
   };
 
   return message;
@@ -34,7 +32,7 @@ const forgotPassword = (url) => {
   return message;
 };
 
-const registerEmail = (data,token) => {
+const registerEmail = (data, token) => {
   const message = {
     subject: "Account Registration",
     text: `Hi ${data}! Thank you for creating an account with us!.`,
@@ -96,4 +94,6 @@ const orderConfirmationEmail = (order) => {
 module.exports = {
   registerEmail,
   login,
+  forgotPassword,
+  resetPassword,
 };

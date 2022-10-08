@@ -22,7 +22,7 @@ const prepareTemplate = (type, host, data, token) => {
 
   switch (type) {
     case "reset":
-      message = template.resetEmail(host, data);
+      message = template.resetPassword(host, token);
       break;
 
     case "login":

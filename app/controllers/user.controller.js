@@ -46,7 +46,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     //   url: cloudFile.secure_url,
     // },
   });
-  await sendToken(user, StatusCodes?.CREATED, res, "register");
+  await sendToken(user, StatusCodes?.CREATED, res, "register",req);
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
@@ -65,11 +65,62 @@ const loginUser = asyncHandler(async (req, res, next) => {
     return next(new Error("Password is incorrect", StatusCodes?.UNAUTHORIZED));
   }
 
-  await sendToken(user, 201, res, "login");
+  await sendToken(user, StatusCodes.CREATED, res, "login",req);
 });
 
-const forgotPassword = asyncHandler(async (req, res, next) => {});
-const resetPassword = asyncHandler(async (req, res, next) => {});
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    // res.redirect("back");
+    return next(new Error("User Not Found", StatusCodes?.NOT_FOUND));
+  }
+
+  const resetToken = await user.getResetPasswordToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  const resetPasswordUrl = `${req.protocol}://${req.get(
+    "host"
+  )}${process.env.API_URL}/user/password/reset/${resetToken}`;
+  try {
+    await sendEmail(user.email, "forgotPassword", "", resetPasswordUrl, "");
+    res.status(StatusCodes.OK).json({
+      success: true,
+      message: `Email sent to ${user.email} successfully`,
+      resetPasswordUrl
+    });
+  } catch (error) {
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new Error(error.message, StatusCodes.INTERNAL_SERVER_ERROR));
+  }
+});
+
+const resetPassword = asyncHandler(async (req, res, next) => {
+  // create hash token
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new Error("Invalid reset password token", StatusCodes.NOT_FOUND));
+  }
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+  sendToken(user, StatusCodes.OK, res,'reset',req);
+});
 
 module.exports = {
   registerUser,
