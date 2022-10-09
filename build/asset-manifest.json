@@ -1,10 +1,16 @@
 {
   "files": {
-    "main.js": "/static/js/main.eb8d6c56.js",
+    "main.css": "/static/css/main.baf0e1a2.css",
+    "main.js": "/static/js/main.830474bd.js",
+    "static/media/payment-methods.svg": "/static/media/payment-methods.988eb4961d60369cbc3b112cffb05261.svg",
+    "static/media/404-not-found.svg": "/static/media/404-not-found.f58b723c5e420e43683574327be5529a.svg",
+    "static/media/logo.png": "/static/media/logo.3b0baaaf50ed860dcc7a.png",
     "index.html": "/index.html",
-    "main.eb8d6c56.js.map": "/static/js/main.eb8d6c56.js.map"
+    "main.baf0e1a2.css.map": "/static/css/main.baf0e1a2.css.map",
+    "main.830474bd.js.map": "/static/js/main.830474bd.js.map"
   },
   "entrypoints": [
-    "static/js/main.eb8d6c56.js"
+    "static/css/main.baf0e1a2.css",
+    "static/js/main.830474bd.js"
   ]
 }
