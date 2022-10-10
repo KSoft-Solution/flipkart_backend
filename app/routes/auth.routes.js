@@ -3,17 +3,24 @@ const {
   registerUser,
   loginUser,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  getUserDetails,
+  updatePassword,
+  updateProfile,
+  logoutUser,
 } = require("../controllers/user.controller");
 const {
   validateLoginRequest,
   isRequestValidated,
   validateSignupRequest,
   validateForgotPasswordRequest,
-  validateResetPasswordRequest
+  validateResetPasswordRequest,
 } = require("../validator/auth.validator");
+const { isAuthenticatedUser } = require("../middlewares/auth");
 
 router
+  .get("/me", isAuthenticatedUser, getUserDetails)
+  .get("/logout", logoutUser)
   .post("/register", validateSignupRequest, isRequestValidated, registerUser)
   .post("/login", validateLoginRequest, isRequestValidated, loginUser)
   .post(
@@ -22,6 +29,13 @@ router
     isRequestValidated,
     forgotPassword
   )
-  .put("/password/reset/:token",validateResetPasswordRequest,isRequestValidated,resetPassword);
+  .put(
+    "/password/reset/:token",
+    validateResetPasswordRequest,
+    isRequestValidated,
+    resetPassword
+  )
+  .put("/password/update", isAuthenticatedUser, updatePassword)
+  .put("/me/update", isAuthenticatedUser, updateProfile);
 
 module.exports = router;

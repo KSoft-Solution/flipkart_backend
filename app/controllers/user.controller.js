@@ -46,7 +46,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
     //   url: cloudFile.secure_url,
     // },
   });
-  await sendToken(user, StatusCodes?.CREATED, res, "register",req);
+  await sendToken(user, StatusCodes?.CREATED, res, "register", req);
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
@@ -64,31 +64,24 @@ const loginUser = asyncHandler(async (req, res, next) => {
   if (!isPasswordMatched) {
     return next(new Error("Password is incorrect", StatusCodes?.UNAUTHORIZED));
   }
-
-  await sendToken(user, StatusCodes.CREATED, res, "login",req);
+  await sendToken(user, StatusCodes.CREATED, res, "login", req);
 });
 
 const forgotPassword = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
-
   if (!user) {
-    // res.redirect("back");
+    res.redirect("back");
     return next(new Error("User Not Found", StatusCodes?.NOT_FOUND));
   }
-
   const resetToken = await user.getResetPasswordToken();
-
   await user.save({ validateBeforeSave: false });
-
-  const resetPasswordUrl = `${req.protocol}://${req.get(
-    "host"
-  )}${process.env.API_URL}/user/password/reset/${resetToken}`;
+  const resetPasswordUrl = `${req.protocol}://${req.get("host")}/password/reset/${resetToken}`;
   try {
     await sendEmail(user.email, "forgotPassword", "", resetPasswordUrl, "");
     res.status(StatusCodes.OK).json({
       success: true,
       message: `Email sent to ${user.email} successfully`,
-      resetPasswordUrl
+      resetPasswordUrl,
     });
   } catch (error) {
     user.resetPasswordToken = undefined;
@@ -111,7 +104,9 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new Error("Invalid reset password token", StatusCodes.NOT_FOUND));
+    return next(
+      new Error("Invalid reset password token", StatusCodes.NOT_FOUND)
+    );
   }
 
   user.password = req.body.password;
@@ -119,7 +114,58 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   user.resetPasswordExpire = undefined;
 
   await user.save();
-  sendToken(user, StatusCodes.OK, res,'reset',req);
+  sendToken(user, StatusCodes.OK, res, "reset", req);
+});
+
+// Get User Details
+const getUserDetails = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+  res.status(StatusCodes.OK).json({
+    success: true,
+    user,
+  });
+});
+
+// Update Password
+const updatePassword = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user.id).select("+password");
+  const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+  if (!isPasswordMatched) {
+    return next(new Error("Old Password is Invalid", 400));
+  }
+  user.password = req.body.newPassword;
+  await user.save();
+  sendToken(user, 201, res, "", req);
+});
+
+// Update User Profile
+const updateProfile = asyncHandler(async (req, res, next) => {
+  const newUserData = {
+    name: req.body.name,
+    email: req.body.email,
+  };
+  await User.findByIdAndUpdate(req.user.id, newUserData, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: true,
+  });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: "user updated successfully!",
+  });
+});
+
+const logoutUser = asyncHandler(async (req, res, next) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+  });
+
+  res.status(StatusCodes.OK).json({
+    success: true,
+    message: "Logged Out",
+  });
 });
 
 module.exports = {
@@ -127,4 +173,8 @@ module.exports = {
   loginUser,
   forgotPassword,
   resetPassword,
+  getUserDetails,
+  updateProfile,
+  updatePassword,
+  logoutUser,
 };
