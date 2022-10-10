@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.16e0b716.css",
-    "main.js": "/static/js/main.fa999ae9.js",
+    "main.css": "/static/css/main.dc5001b9.css",
+    "main.js": "/static/js/main.71be1a90.js",
     "static/media/payment-methods.svg": "/static/media/payment-methods.988eb4961d60369cbc3b112cffb05261.svg",
     "static/media/404-not-found.svg": "/static/media/404-not-found.f58b723c5e420e43683574327be5529a.svg",
     "static/media/furniture.png": "/static/media/furniture.c167da994e4cf873c7f5.png",
@@ -25,11 +25,11 @@
     "static/media/slick.ttf": "/static/media/slick.c94f7671dcc99dce43e2.ttf",
     "static/media/slick.woff": "/static/media/slick.295183786cd8a1389865.woff",
     "index.html": "/index.html",
-    "main.16e0b716.css.map": "/static/css/main.16e0b716.css.map",
-    "main.fa999ae9.js.map": "/static/js/main.fa999ae9.js.map"
+    "main.dc5001b9.css.map": "/static/css/main.dc5001b9.css.map",
+    "main.71be1a90.js.map": "/static/js/main.71be1a90.js.map"
   },
   "entrypoints": [
-    "static/css/main.16e0b716.css",
-    "static/js/main.fa999ae9.js"
+    "static/css/main.dc5001b9.css",
+    "static/js/main.71be1a90.js"
   ]
 }

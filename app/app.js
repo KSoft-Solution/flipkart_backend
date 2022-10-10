@@ -73,7 +73,9 @@ app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
 });
-app.use(cors());
+app.use(cors({
+  methods:"*"
+}));
 
 __dirname = path.resolve();
 if (process.env.NODE_ENV === 'production') {
